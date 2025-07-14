@@ -1,15 +1,27 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using ShortenerService.Models;
+using ShortenerService.Shared;
 
 namespace ShortenerService.Infrastracture.Context;
 
-public class ShortenerContext
+public sealed class ShortenerContext
 {
     public IMongoCollection<UrlDetails> UrlDetails { get; }
 
-    public ShortenerContext(IConfiguration configuration)
+    public ShortenerContext(IOptions<DatabaseSettings> databaseSettings)
     {
-        var client = new MongoClient(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
-        var database = client.GetDatabase(configuration.GetValue<string>("DatabaseSettings:DatabaseName"));
-        UrlDetails = database.GetCollection<UrlDetails>(configuration.GetValue<string>("DatabaseSettings:CollectionName"));
+        var settings = databaseSettings.Value ?? throw new ArgumentNullException(nameof(databaseSettings));
+
+        if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+            throw new ArgumentException("ConnectionString is missing.");
+        if (string.IsNullOrWhiteSpace(settings.DatabaseName))
+            throw new ArgumentException("DatabaseName is missing.");
+        if (string.IsNullOrWhiteSpace(settings.CollectionName))
+            throw new ArgumentException("CollectionName is missing.");
+
+        var client = new MongoClient(settings.ConnectionString);
+        var database = client.GetDatabase(settings.DatabaseName);
+        UrlDetails = database.GetCollection<UrlDetails>(settings.CollectionName);
     }
 }
