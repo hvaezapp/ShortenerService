@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace ShortenerService.Models
+namespace ShortenerService.Domain.Entities
 {
     public class UrlDetails
     {

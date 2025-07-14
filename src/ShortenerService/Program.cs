@@ -1,24 +1,16 @@
-using Microsoft.Extensions.Configuration;
 using Scalar.AspNetCore;
-using ShortenerService.Infrastracture.Context;
+using ShortenerService.Bootstraper;
+using ShortenerService.Domain.Entities;
 using ShortenerService.Infrastracture.Repositories;
-using ShortenerService.Models;
-using ShortenerService.Shared;
 using ShortenerService.Shared.Utilities;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-
-builder.Services.AddScoped<ShortenerContext>();
-builder.Services.AddScoped<UrlDetailsRepository>();
-
-builder.Services.AddOpenApi();
-
+builder.RegisterCommon();
+builder.RegisterIoc();
+builder.RegisterRedis();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -28,16 +20,16 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.MapGet("/shorten", async (UrlDetailsRepository urlDetailsRepository, 
-                              IConfiguration configuration,  
+app.MapGet("/shorten", async (UrlDetailsRepository urlDetailsRepository,
+                              IConfiguration configuration,
                               string longUrl) =>
 {
     if (string.IsNullOrWhiteSpace(longUrl) || Uri.IsWellFormedUriString(longUrl, UriKind.Absolute) is false)
-    {
         return Results.BadRequest("The URL query string is required and needs to be well formed");
-    }
 
     var shortCode = AppUtility.GenerateCode(longUrl);
+
+    // save in redis cash
 
     var newUrlDetails = UrlDetails.Create(longUrl, shortCode);
 
@@ -51,5 +43,5 @@ app.MapGet("/shorten", async (UrlDetailsRepository urlDetailsRepository,
 
 
 
-app.UseHttpsRedirection();
+
 app.Run();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using ShortenerService.Models;
+using ShortenerService.Domain.Entities;
 using ShortenerService.Shared;
 
 namespace ShortenerService.Infrastracture.Context;

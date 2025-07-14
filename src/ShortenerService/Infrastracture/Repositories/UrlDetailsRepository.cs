@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 using ShortenerService.Infrastracture.Context;
-using ShortenerService.Models;
+using ShortenerService.Domain.Entities;
 
 namespace ShortenerService.Infrastracture.Repositories;
 
