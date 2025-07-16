@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DispatchR.Extensions;
+using DispatchR.Requests.Notification;
+using ShortenerService.Events;
+using ShortenerService.Handlers;
 using ShortenerService.Infrastracture.Context;
-using ShortenerService.Infrastracture.Repositories;
 using ShortenerService.Services;
 using ShortenerService.Shared;
-using StackExchange.Redis;
+using System.Reflection;
 
 namespace ShortenerService.Bootstraper;
 
@@ -13,16 +15,21 @@ public static class ServiceRegistration
     public static void RegisterCommon(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
-
         builder.Services.AddOpenApi();
     }
 
 
+    public static void RegisterDispatchR(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddDispatchR(Assembly.GetExecutingAssembly());
+        builder.Services.AddScoped<INotificationHandler<UrlDetailsCreatedEvent>, UrlDetailsCreatedEventHandler>();
+    }
+
     public static void RegisterIoc(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<UrlDetailsService>();
         builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<ShortenerContext>();
-        builder.Services.AddScoped<UrlDetailsRepository>();
     }
 
 

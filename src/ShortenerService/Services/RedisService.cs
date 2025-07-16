@@ -1,20 +1,21 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using ShortenerService.Domain.Entities;
+using System.Text.Json;
 
 namespace ShortenerService.Services
 {
-    public class RedisService
+    public class RedisService(IDistributedCache redisCache)
     {
-        private readonly IDistributedCache _redisCache;
+        private readonly IDistributedCache _redisCache = redisCache;
 
-        public RedisService(IDistributedCache redisCache)
+        public async Task SetUrlDeatils(string shortCode, string longUrl)
         {
-            _redisCache = redisCache;
+            await _redisCache.SetStringAsync(shortCode, longUrl);
         }
 
-        public async Task UpdateUserActionHistory(string shortCode, UrlDetails urlDetails)
+        public async Task<UrlDetails> GetUrlDeatils(string shortCode)
         {
-            await _redisCache.SetStringAsync(shortCode, null);
+            return null;
         }
 
     }
