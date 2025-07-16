@@ -1,5 +1,7 @@
-﻿using ShortenerService.Infrastracture.Context;
+﻿using Microsoft.Extensions.Configuration;
+using ShortenerService.Infrastracture.Context;
 using ShortenerService.Infrastracture.Repositories;
+using ShortenerService.Services;
 using ShortenerService.Shared;
 using StackExchange.Redis;
 
@@ -18,6 +20,7 @@ public static class ServiceRegistration
 
     public static void RegisterIoc(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<RedisService>();
         builder.Services.AddScoped<ShortenerContext>();
         builder.Services.AddScoped<UrlDetailsRepository>();
     }
@@ -25,9 +28,14 @@ public static class ServiceRegistration
 
     public static void RegisterRedis(this WebApplicationBuilder builder)
     {
-        var RedisConnectionString = builder.Configuration.GetConnectionString("RedisSettings");
-        if (string.IsNullOrEmpty(RedisConnectionString))
-            throw new InvalidOperationException("This Redis connection string is missing or empty");
-        builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(RedisConnectionString));
+        var redisSettings = builder.Configuration.GetSection("RedisSettings").Get<RedisSettings>();
+        if (string.IsNullOrEmpty(redisSettings?.ConnectionString))
+            throw new InvalidOperationException("Redis connection string is missing or empty");
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisSettings?.ConnectionString;
+        });
+
     }
 }
