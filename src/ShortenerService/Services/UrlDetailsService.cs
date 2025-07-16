@@ -7,7 +7,7 @@ using ShortenerService.Shared.Utilities;
 
 namespace ShortenerService.Services;
 
-public class UrlDetailsService(ShortenerContext context , RedisService redisService , 
+public class UrlDetailsService(ShortenerContext context, RedisService redisService,
                                IConfiguration configuration, IMediator mediator)
 {
     private readonly ShortenerContext _context = context;
@@ -29,7 +29,7 @@ public class UrlDetailsService(ShortenerContext context , RedisService redisServ
         await _context.UrlDetails.InsertOneAsync(newUrlDetails);
 
         // raise event for add to redis
-        await _mediator.Publish(new UrlDetailsCreatedEvent(newUrlDetails.ShortCode, newUrlDetails.LongUrl), CancellationToken.None);
+        await _mediator.Publish(new UrlDetailsChangedEvent(newUrlDetails.ShortCode, newUrlDetails.LongUrl), CancellationToken.None);
 
         return new UriBuilder(_configuration["BaseUrl"]!) { Path = $"{shortCode}" };
     }
@@ -37,17 +37,23 @@ public class UrlDetailsService(ShortenerContext context , RedisService redisServ
 
     public async Task<UriBuilder> GetUrl(string shortCode)
     {
-        UrlDetails urlDetails = null;
-
         // try to read from redis
-        urlDetails = _redisService.GetUrlDeatils(shortCode);
+        string? longUrl = await _redisService.GetUrl(shortCode);
+        if (string.IsNullOrEmpty(longUrl))
+        {
+            // read from mongodb
+            var urlDetails = await _context.UrlDetails.Find(p => p.ShortCode == shortCode).FirstOrDefaultAsync();
+            if (urlDetails is null)
+                throw new ArgumentNullException(nameof(shortCode), "Shortcode invalid, url not found");
 
-        var urlDetails = await _context.UrlDetails.Find(p => p.ShortCode == shortCode).FirstOrDefaultAsync();
-        if (urlDetails is null)
-            throw new ArgumentNullException(nameof(shortCode), "Shortcode invalid, url not found");
+            longUrl = urlDetails.LongUrl;
+        }
 
-        if (!Uri.TryCreate(urlDetails.LongUrl, UriKind.Absolute, out var validatedUri))
+        if (!Uri.TryCreate(longUrl, UriKind.Absolute, out var validatedUri))
             throw new Exception("Invalid URL");
+
+        // raise event to write on redis for consistency
+        await _mediator.Publish(new UrlDetailsChangedEvent(shortCode, longUrl), CancellationToken.None);
 
         return new UriBuilder(validatedUri);
     }

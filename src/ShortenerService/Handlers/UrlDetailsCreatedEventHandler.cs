@@ -4,11 +4,11 @@ using ShortenerService.Services;
 
 namespace ShortenerService.Handlers;
 
-public sealed class UrlDetailsCreatedEventHandler(RedisService redisService) : INotificationHandler<UrlDetailsCreatedEvent>
+public sealed class UrlDetailsCreatedEventHandler(RedisService redisService) : INotificationHandler<UrlDetailsChangedEvent>
 {
-    public async ValueTask Handle(UrlDetailsCreatedEvent notification, CancellationToken cancellationToken)
+    public async ValueTask Handle(UrlDetailsChangedEvent notification, CancellationToken cancellationToken)
     {
         // add to redis
-        await redisService.SetUrlDeatils(notification.shortenCode, notification.longUrl);
+        await redisService.SetUrl(notification.shortenCode, notification.longUrl);
     }
 }

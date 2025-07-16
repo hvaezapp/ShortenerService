@@ -22,7 +22,7 @@ public static class ServiceRegistration
     public static void RegisterDispatchR(this WebApplicationBuilder builder)
     {
         builder.Services.AddDispatchR(Assembly.GetExecutingAssembly());
-        builder.Services.AddScoped<INotificationHandler<UrlDetailsCreatedEvent>, UrlDetailsCreatedEventHandler>();
+        builder.Services.AddScoped<INotificationHandler<UrlDetailsChangedEvent>, UrlDetailsCreatedEventHandler>();
     }
 
     public static void RegisterIoc(this WebApplicationBuilder builder)
