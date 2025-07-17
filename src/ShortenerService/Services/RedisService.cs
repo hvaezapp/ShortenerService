@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using MongoDB.Driver;
-using ShortenerService.Domain.Entities;
-using System.Text.Json;
 
 namespace ShortenerService.Services;
 
@@ -16,7 +13,7 @@ public class RedisService(IDistributedCache redisCache)
 
     public async Task<string?> GetUrl(string shortCode)
     {
-       return await _redisCache.GetStringAsync(shortCode);
+        return await _redisCache.GetStringAsync(shortCode);
     }
 
 }

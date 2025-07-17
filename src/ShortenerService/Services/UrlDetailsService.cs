@@ -16,7 +16,7 @@ public class UrlDetailsService(ShortenerContext context, RedisService redisServi
     private readonly IMediator _mediator = mediator;
 
 
-    public async Task<UriBuilder> ShortUrl(string url)
+    public async Task<UriBuilder> ShortenUrl(string url)
     {
         if (string.IsNullOrWhiteSpace(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute) is false)
             throw new Exception("The URL query string is required and needs to be well formed");
@@ -35,7 +35,7 @@ public class UrlDetailsService(ShortenerContext context, RedisService redisServi
     }
 
 
-    public async Task<UriBuilder> GetUrl(string shortCode)
+    public async Task<UriBuilder> RedirectUrl(string shortCode)
     {
         // try to read from redis
         string? longUrl = await _redisService.GetUrl(shortCode);
