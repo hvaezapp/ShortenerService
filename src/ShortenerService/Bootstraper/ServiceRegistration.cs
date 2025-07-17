@@ -1,8 +1,8 @@
 ﻿using DispatchR.Extensions;
 using DispatchR.Requests.Notification;
-using ShortenerService.Events;
-using ShortenerService.Handlers;
+using ShortenerService.Infrastracture.Consumers;
 using ShortenerService.Infrastracture.Context;
+using ShortenerService.Infrastracture.IntegrationEvents;
 using ShortenerService.Services;
 using ShortenerService.Shared;
 using System.Reflection;
@@ -22,7 +22,7 @@ public static class ServiceRegistration
     public static void RegisterDispatchR(this WebApplicationBuilder builder)
     {
         builder.Services.AddDispatchR(Assembly.GetExecutingAssembly());
-        builder.Services.AddScoped<INotificationHandler<UrlDetailsChangedEvent>, UrlDetailsCreatedEventHandler>();
+        builder.Services.AddScoped<INotificationHandler<UrlDetailsChangedEvent>, UrlDetailsCreatedEventConsumer>();
     }
 
     public static void RegisterIoc(this WebApplicationBuilder builder)

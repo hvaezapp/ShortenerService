@@ -1,10 +1,10 @@
 ﻿using DispatchR.Requests.Notification;
-using ShortenerService.Events;
+using ShortenerService.Infrastracture.IntegrationEvents;
 using ShortenerService.Services;
 
-namespace ShortenerService.Handlers;
+namespace ShortenerService.Infrastracture.Consumers;
 
-public sealed class UrlDetailsCreatedEventHandler(RedisService redisService) : INotificationHandler<UrlDetailsChangedEvent>
+public sealed class UrlDetailsCreatedEventConsumer(RedisService redisService) : INotificationHandler<UrlDetailsChangedEvent>
 {
     public async ValueTask Handle(UrlDetailsChangedEvent notification, CancellationToken cancellationToken)
     {

@@ -1,4 +1,4 @@
 ﻿using DispatchR.Requests.Notification;
 
-namespace ShortenerService.Events;
+namespace ShortenerService.Infrastracture.IntegrationEvents;
 public sealed record UrlDetailsChangedEvent(string shortenCode, string longUrl) : INotification;

@@ -1,6 +1,8 @@
+using DispatchR.Requests.Notification;
 using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 using ShortenerService.Bootstraper;
+using ShortenerService.Infrastracture.Context;
 using ShortenerService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,3 +38,4 @@ app.MapGet("/{short_code:required}", async (UrlDetailsService urlDetailsService,
 });
 
 app.Run();
+

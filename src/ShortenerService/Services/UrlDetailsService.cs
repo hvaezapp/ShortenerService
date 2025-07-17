@@ -1,8 +1,8 @@
 ﻿using DispatchR.Requests;
 using MongoDB.Driver;
 using ShortenerService.Domain.Entities;
-using ShortenerService.Events;
 using ShortenerService.Infrastracture.Context;
+using ShortenerService.Infrastracture.IntegrationEvents;
 using ShortenerService.Shared.Utilities;
 
 namespace ShortenerService.Services;
