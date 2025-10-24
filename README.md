@@ -1,4 +1,4 @@
-# ShortenerService
+# URL Shortener Service
 
 A URL shortening service built with ASP.NET Core 9, utilizing MongoDB for persistent storage, Redis for caching, and Docker for containerization. The service converts long URLs into short, unique codes and redirects users to the original URL when the short code is accessed. It uses Minimal APIs for a lightweight implementation, an event-driven approach with DispatchR for cache synchronization, and Scalar for interactive API documentation.
 
